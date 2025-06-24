@@ -1,0 +1,26 @@
+:root {
+  /* Primary Colors */
+  --color-violet-primary: #4D007D; /* Main violet background and buttons */
+  
+  /* Secondary Colors */
+  --color-light-gray-secondary: #D3D3D3; /* Light gray for text/buttons */
+  
+  /* Background Colors */
+  --color-light-background: #F9F9F9; /* Light background for forms */
+  
+  /* Text Colors */
+  --color-dark-text: #333; /* Default text color */
+  
+  /* Input Styles */
+  --color-input-background: #FFFFFF; /* White input background */
+  --color-input-border: #CCCCCC; /* Light gray input border */
+  
+  /* Border and Spacing */
+  --border-radius: 8px;
+  --spacing: 1rem;
+  
+  /* Placeholder for Dashboard Colors (to be updated) */
+  --color-dashboard-accent: #000000; /* Placeholder for dashboard accents */
+  --color-dashboard-card: #FFFFFF; /* Placeholder for dashboard card backgrounds */
+  --color-dashboard-text: #666666; /* Placeholder for dashboard text */
+}

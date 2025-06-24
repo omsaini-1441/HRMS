@@ -1,9 +1,12 @@
-import React from 'react'
+import { Outlet } from 'react-router-dom';
 
-const dashboardPage = () => {
+function DashboardPage() {
   return (
-    <div>dashboardPage</div>
-  )
+    <div>
+      <h2>HRMS Dashboard</h2>
+      <Outlet />
+    </div>
+  );
 }
 
-export default dashboardPage
+export default DashboardPage;

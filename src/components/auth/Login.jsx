@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Login.css";
 import dashboardImage from "../../assets/images/dashboard.png";
 import eyeIcon from "../../assets/images/eye.png";
@@ -17,7 +18,10 @@ function Login() {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const BASE_API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
   const handleToggle = () => {
     setIsLogin(!isLogin);
@@ -66,40 +70,27 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setIsLoading(true);
+      setErrors({});
       try {
         if (!isLogin) {
-          const registerResponse = await fetch("http://localhost:5000/api/auth/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-          });
-          const registerData = await registerResponse.json();
-          if (!registerResponse.ok) {
-            setErrors({ general: registerData.message || "Registration failed" });
-            return;
-          }
-          setErrors({ general: "Registration successful. Please log in." }); // Ensure this is set
+          const response = await axios.post(`${BASE_API_URL}/auth/register`, formData);
+          setErrors({ general: "Registration successful. Please log in." });
           setIsLogin(true);
           setFormData((prev) => ({ ...prev, password: "", confirmPassword: "" }));
           return;
         }
-        const response = await fetch("http://localhost:5000/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: formData.email,
-            password: formData.password,
-          }),
+        const response = await axios.post(`${BASE_API_URL}/auth/login`, {
+          email: formData.email,
+          password: formData.password,
         });
-        const data = await response.json();
-        if (response.ok) {
-          localStorage.setItem("token", data.token);
-          navigate("/dashboard/candidates");
-        } else {
-          setErrors({ general: data.message || "Login failed" });
-        }
+        localStorage.setItem("token", response.data.token);
+        navigate("/dashboard/candidates");
       } catch (error) {
-        setErrors({ general: "An error occurred. Please try again." });
+        const errorMessage = error.response?.data?.message || (isLogin ? "Login failed" : "Registration failed");
+        setErrors({ general: errorMessage });
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -113,7 +104,7 @@ function Login() {
   };
 
   useEffect(() => {
-    setErrors({}); // Clear errors when switching modes
+    setErrors({});
   }, [isLogin]);
 
   return (
@@ -154,6 +145,7 @@ function Login() {
         <div className="right-panel">
           <div className="form-container">
             <h2 className="form-title">Welcome to Dashboard</h2>
+            {isLoading && <div className="loading-message">Loading...</div>}
             <form onSubmit={handleSubmit} className="login-form">
               {!isLogin && (
                 <div className="form-group">
@@ -164,6 +156,7 @@ function Login() {
                     value={formData.fullName}
                     onChange={handleChange}
                     className="form-input"
+                    disabled={isLoading}
                   />
                   {errors.fullName && <span className="error-message">{errors.fullName}</span>}
                 </div>
@@ -176,6 +169,7 @@ function Login() {
                   value={formData.email}
                   onChange={handleChange}
                   className="form-input"
+                  disabled={isLoading}
                 />
                 {errors.email && <span className="error-message">{errors.email}</span>}
               </div>
@@ -188,6 +182,7 @@ function Login() {
                     value={formData.password}
                     onChange={handleChange}
                     className="form-input password-input"
+                    disabled={isLoading}
                   />
                   <img
                     src={showPassword ? eyeIcon : eyeOffIcon}
@@ -208,6 +203,7 @@ function Login() {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       className="form-input password-input"
+                      disabled={isLoading}
                     />
                     <img
                       src={showConfirmPassword ? eyeIcon : eyeOffIcon}
@@ -221,34 +217,34 @@ function Login() {
               )}
               <button
                 type="submit"
-                disabled={!formData.email || !formData.password || Object.keys(errors).length > 0}
-                className={`submit-button ${formData.email && formData.password && Object.keys(errors).length === 0 ? "valid" : "invalid"}`}
+                disabled={!formData.email || !formData.password || Object.keys(errors).length > 0 || isLoading}
+                className={`submit-button ${formData.email && formData.password && Object.keys(errors).length === 0 && !isLoading ? "valid" : "invalid"}`}
               >
                 {isLogin ? "Login" : "Register"}
               </button>
-            </form>
-            {isLogin && (
-              <div className="form-link forgot-password">
-                <button type="button" className="link-button">
-                  Forgot password?
+              </form>
+              {isLogin && (
+                <div className="form-link forgot-password">
+                  <button type="button" className="link-button">
+                    Forgot password?
+                  </button>
+                </div>
+              )}
+              <div className="form-link toggle-link">
+                <button type="button" onClick={handleToggle} className="link-button" disabled={isLoading}>
+                  {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
                 </button>
               </div>
-            )}
-            <div className="form-link toggle-link">
-              <button type="button" onClick={handleToggle} className="link-button">
-                {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
-              </button>
+              {errors.general && (
+                <span className={errors.general.includes("successful") ? "success-message" : "error-message"}>
+                  {errors.general}
+                </span>
+              )}
             </div>
-            {errors.general && (
-              <span className={errors.general.includes("successful") ? "success-message" : "error-message"}>
-                {errors.general}
-              </span>
-            )}
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
 }
 
 export default Login;

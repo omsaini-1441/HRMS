@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
@@ -7,33 +8,43 @@ function DashboardPage() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check authentication on component mount
   useEffect(() => {
+    // Setup axios interceptor for 401 handling
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          navigate('/');
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // Check token validity on mount
     const checkAuth = () => {
       const token = localStorage.getItem('token');
       if (!token) {
         navigate('/');
         return;
       }
-
-      
       try {
-      
         const payload = JSON.parse(atob(token.split('.')[1]));
         const currentTime = Date.now() / 1000;
         if (payload.exp < currentTime) {
           localStorage.removeItem('token');
           navigate('/');
-          return;
         }
       } catch (error) {
-        // Invalid token format
         localStorage.removeItem('token');
         navigate('/');
       }
     };
 
     checkAuth();
+
+    // Cleanup interceptor on unmount
+    return () => axios.interceptors.response.eject(interceptor);
   }, [navigate]);
 
   const getPageTitle = () => {

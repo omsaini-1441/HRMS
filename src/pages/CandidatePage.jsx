@@ -25,7 +25,7 @@ const CandidatePage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const statusOptions = ['New', 'Scheduled', 'Ongoing', 'Selected', 'Rejected'];
-  const positionOptions = ['Senior Developer', 'Human Resource Lead', 'Full Time Designer', 'Full Time Developer', 'Frontend Developer', 'Backend Developer', 'Product Manager'];
+  const positionOptions = ['Senior Developer', 'Human Resource Lead', ' Designer', 'Full Stack Developer', 'Frontend Developer', 'Backend Developer', 'Product Manager'];
 
   const BASE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
@@ -37,7 +37,7 @@ const CandidatePage = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await axios.get(`${API_BASE_URL}/candidates`, {
+      const response = await axios.get(`${BASE_API_URL}/candidates`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
@@ -82,8 +82,36 @@ const CandidatePage = () => {
     setFilteredCandidates(filtered);
   }, [candidates, statusFilter, positionFilter, searchTerm]);
 
+  const validateNewCandidate = () => {
+    const errors = {};
+    if (!newCandidate.fullName.trim() || newCandidate.fullName.length < 2) {
+      errors.fullName = 'Full name must be at least 2 characters';
+    }
+    if (!/^\S+@\S+\.\S+$/.test(newCandidate.email)) {
+      errors.email = 'Invalid email format';
+    }
+    if (!/^\+?[\d\s-]{10,15}$/.test(newCandidate.phone)) {
+      errors.phone = 'Invalid phone number (10-15 digits)';
+    }
+    if (!newCandidate.position) {
+      errors.position = 'Position is required';
+    }
+    if (!newCandidate.experience.trim()) {
+      errors.experience = 'Experience is required';
+    }
+    if (!newCandidate.resume) {
+      errors.resume = 'Resume is required';
+    }
+    return errors;
+  };
+
   const handleAddCandidate = async (e) => {
     e.preventDefault();
+    const validationErrors = validateNewCandidate();
+    if (Object.keys(validationErrors).length > 0) {
+      setError(Object.values(validationErrors).join(', '));
+      return;
+    }
     try {
       setIsLoading(true);
       setError(null);
@@ -92,7 +120,7 @@ const CandidatePage = () => {
         formData.append(key, newCandidate[key]);
       });
 
-      const response = await axios.post(`${API_BASE_URL}/candidates`, formData, {
+      const response = await axios.post(`${BASE_API_URL}/candidates`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -123,17 +151,17 @@ const CandidatePage = () => {
     }
   };
 
-  const handleDeleteCandidate = async () => {
+  const handleDeleteCandidate = async (candidateId) => {
     try {
       setIsLoading(true);
       setError(null);
-      await axios.delete(`${API_BASE_URL}/candidates/${candidateToDelete._id}`, {
+      await axios.delete(`${BASE_API_URL}/candidates/${candidateId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       
-      setCandidates(candidates.filter(c => c._id !== candidateToDelete._id));
+      setCandidates(candidates.filter(c => c._id !== candidateId));
       setShowDeleteModal(false);
       setCandidateToDelete(null);
     } catch (error) {
@@ -154,7 +182,7 @@ const CandidatePage = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await axios.get(`${API_BASE_URL}/candidates/${candidate._id}/resume`, {
+      const response = await axios.get(`${BASE_API_URL}/candidates/${candidate._id}/resume`, {
         responseType: 'blob',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -187,7 +215,7 @@ const CandidatePage = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await axios.patch(`${API_BASE_URL}/candidates/${candidateId}`, 
+      const response = await axios.patch(`${BASE_API_URL}/candidates/${candidateId}`, 
         { status: newStatus },
         {
           headers: {
@@ -195,12 +223,29 @@ const CandidatePage = () => {
           }
         }
       );
-      
-      setCandidates(candidates.map(candidate =>
-        candidate._id === candidateId ? response.data : candidate
-      ));
+
+      if (newStatus === 'Selected') {
+        const candidate = candidates.find(c => c._id === candidateId);
+        await axios.post(`${BASE_API_URL}/employees`, {
+          fullName: candidate.fullName,
+          email: candidate.email,
+          phone: candidate.phone,
+          position: candidate.position,
+          experience: candidate.experience,
+          resume: candidate.resume
+        }, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        await handleDeleteCandidate(candidateId);
+      } else {
+        setCandidates(candidates.map(candidate =>
+          candidate._id === candidateId ? response.data : candidate
+        ));
+      }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Failed to update candidate status. Please try again.';
+      const errorMessage = error.response?.data?.message || 'Failed to update candidate status or move to employee. Please try again.';
       setError(errorMessage);
       console.error('Error updating candidate status:', {
         message: errorMessage,
@@ -216,10 +261,10 @@ const CandidatePage = () => {
   const getStatusColor = (status) => {
     const colors = {
       'New': { color: '#1E40AF' },
-      'Scheduled': { color: '#92400E' },
-      'Ongoing': { color: '#9A3412' },
-      'Selected': { color: '#166534' },
-      'Rejected': { color: '#991B1B' }
+      'Scheduled': { color: '#E8B000' },
+      'Ongoing': { color: '#008413' },
+      'Selected': { color: '#4D007D' },
+      'Rejected': { color: '#B70000' }
     };
     return colors[status] || { color: '#4B5563' };
   };
@@ -391,7 +436,7 @@ const CandidatePage = () => {
                     required
                     disabled={isLoading}
                   />
-                </div>
+                  </div>
                 <div className="form-group">
                   <input
                     type="email"
@@ -506,7 +551,7 @@ const CandidatePage = () => {
               </button>
               <button 
                 className="delete-confirm-btn"
-                onClick={handleDeleteCandidate}
+                onClick={() => handleDeleteCandidate(candidateToDelete._id)}
                 disabled={isLoading}
               >
                 Delete

@@ -90,7 +90,7 @@
   border-collapse: separate;
   border-spacing: 0;
   border-radius: var(--border-radius);
-  overflow: hidden; /* Ensure rounded corners apply to the table */
+  overflow: visible; /* Ensure rounded corners apply to the table */
 }
 
 .candidates-table thead {
@@ -236,7 +236,7 @@
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .modal-header {

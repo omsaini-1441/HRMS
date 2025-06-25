@@ -90,7 +90,7 @@
   border-collapse: separate;
   border-spacing: 0;
   border-radius: var(--border-radius);
-  overflow: visible; /* Ensure rounded corners apply to the table */
+  overflow: visible;
 }
 
 .candidates-table thead {
@@ -270,29 +270,92 @@
 
 .form-row {
   display: flex;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 20px; /* Increased gap for better spacing */
+  margin-bottom: 24px; /* Increased margin for better spacing */
 }
 
 .form-group {
   flex: 1;
+  position: relative;
 }
 
-.form-group input,
-.form-group select {
+/* Floating label styles for text inputs */
+.floating-label {
+  position: relative;
   width: 100%;
-  padding: 12px 16px;
+}
+
+.floating-label input {
+  width: 100%;
+  padding: 12px 14px; /* Increased padding for better spacing */
   border: 1px solid var(--color-input-border);
   border-radius: var(--border-radius);
   font-size: 14px;
   background-color: var(--color-input-background);
+  box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus {
+.floating-label input:focus {
   outline: none;
   border-color: var(--color-violet-primary);
   box-shadow: 0 0 0 3px rgba(77, 0, 125, 0.1);
+}
+
+.floating-label span {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #6b7280;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background-color: var(--color-input-background);
+  padding: 0 4px;
+}
+
+.floating-label .label-active {
+  top: -8px;
+  left: 10px;
+  font-size: 12px;
+  color: var(--color-violet-primary);
+  background-color: var(--color-dashboard-card);
+  padding: 0 4px;
+}
+
+/* Static label styles for dropdowns, file inputs, and date inputs */
+.static-label {
+  position: relative;
+  width: 100%;
+}
+
+.static-label select,
+.static-label .file-input-label,
+.static-label .date-input {
+  width: 100%;
+  padding: 12px 14px; /* Increased padding for better spacing */
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  background-color: var(--color-input-background);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.static-label select:focus,
+.static-label .file-input-label:focus,
+.static-label .date-input:focus {
+  outline: none;
+  border-color: var(--color-violet-primary);
+  box-shadow: 0 0 0 3px rgba(77, 0, 125, 0.1);
+}
+
+.static-label select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 40px;
 }
 
 .file-input-wrapper {
@@ -304,7 +367,7 @@
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 12px 14px; /* Increased padding for better spacing */
   border: 1px solid var(--color-input-border);
   border-radius: var(--border-radius);
   font-size: 14px;
@@ -320,8 +383,8 @@
 .form-checkbox {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 10px; /* Increased gap for better spacing */
+  margin-bottom: 20px; /* Increased margin for better spacing */
 }
 
 .form-checkbox input[type="checkbox"] {
@@ -339,11 +402,12 @@
   background-color: var(--color-violet-primary);
   color: white;
   border: none;
-  padding: 12px 20px;
+  padding: 12px 20px; /* Increased padding for better spacing */
   border-radius: 999px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
+  margin-top: 10px; /* Added margin for better spacing */
 }
 
 .submit-btn:hover {
@@ -355,32 +419,32 @@
 }
 
 .delete-content {
-  padding: 20px;
+  padding: 20px; /* Increased padding for better spacing */
   text-align: center;
 }
 
 .delete-content p {
-  margin: 0 0 8px 0;
-  font-size: 16px;
+  margin: 0 0 10px 0; /* Increased margin for better spacing */
+  font-size: 14px;
   color: var(--color-dark-text);
 }
 
 .warning-text {
   color: #dc2626;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .delete-actions {
   display: flex;
-  gap: 12px;
-  padding: 20px;
+  gap: 12px; /* Increased gap for better spacing */
+  padding: 20px; /* Increased padding for better spacing */
   border-top: 1px solid #e5e7eb;
 }
 
 .cancel-btn,
 .delete-confirm-btn {
   flex: 1;
-  padding: 10px 16px;
+  padding: 10px 16px; /* Increased padding for better spacing */
   border-radius: 999px;
   cursor: pointer;
   font-size: 14px;

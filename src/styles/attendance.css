@@ -1,0 +1,258 @@
+/* Attendance Page Specific Styles */
+.attendance-container {
+  padding: 0;
+}
+
+.attendance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: var(--color-dashboard-card);
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.attendance-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.attendance-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Date Selector Styles */
+.date-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--color-input-background);
+  border: 1px solid var(--color-input-border);
+  border-radius: 9999px;
+  padding: 6px 8px;
+}
+
+.date-selector .date-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.date-selector:focus-within {
+  border-color: var(--color-violet-primary);
+  box-shadow: 0 0 0 3px rgba(77, 0, 125, 0.1);
+}
+
+/* Selected Date Display */
+.selected-date-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.date-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.date-value {
+  font-size: 14px;
+  color: var(--color-violet-primary);
+  font-weight: 600;
+}
+
+.attendance-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: var(--border-radius);
+}
+
+.attendance-table thead {
+  background-color: var(--color-violet-primary);
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+.attendance-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  border-bottom: 1px solid #3d0066;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: ellipsis;
+}
+
+.attendance-table td {
+  padding: 16px 12px;
+  font-size: 14px;
+  color: var(--color-dark-text);
+  border-bottom: 1px solid #f3f4f6;
+  white-space: nowrap;
+  overflow: visible;
+  text-overflow: ellipsis;
+}
+
+.attendance-table tbody tr:first-child td {
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+
+.attendance-table tbody tr:last-child td {
+  border-bottom: none;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+}
+
+.attendance-table td:first-child {
+  border-left: 1px solid #f3f4f6;
+  border-top-left-radius: var(--border-radius);
+}
+
+.attendance-table td:last-child {
+  border-right: 1px solid #f3f4f6;
+  border-top-right-radius: var(--border-radius);
+}
+
+.attendance-table tbody tr:hover {
+  background-color: var(--color-light-background);
+}
+
+/* Task cell specific styling */
+.task-cell {
+  max-width: 200px;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+/* Task Modal Specific Styles */
+.task-modal {
+  max-width: 500px;
+}
+
+.task-form-content {
+  padding: 20px;
+}
+
+.employee-info {
+  background-color: var(--color-light-background);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+}
+
+.employee-info p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--color-dark-text);
+}
+
+.employee-info p:last-child {
+  margin-bottom: 0;
+}
+
+.task-form-content .form-group {
+  margin-bottom: 0;
+}
+
+.task-form-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-dark-text);
+}
+
+.task-form-content textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--border-radius);
+  font-size: 14px;
+  background-color: var(--color-input-background);
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.task-form-content textarea:focus {
+  outline: none;
+  border-color: var(--color-violet-primary);
+  box-shadow: 0 0 0 3px rgba(77, 0, 125, 0.1);
+}
+
+.task-form-content textarea::placeholder {
+  color: #9ca3af;
+}
+
+.task-form-actions {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.task-form-actions .cancel-btn,
+.task-form-actions .submit-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.task-form-actions .cancel-btn {
+  background-color: #f3f4f6;
+  color: var(--color-dark-text);
+  border: 1px solid var(--color-input-border);
+}
+
+.task-form-actions .cancel-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.task-form-actions .submit-btn {
+  background-color: var(--color-violet-primary);
+  color: white;
+  border: none;
+}
+
+.task-form-actions .submit-btn:hover {
+  background-color: #3d0066;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .attendance-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .attendance-header-left,
+  .attendance-header-right {
+    justify-content: space-between;
+  }
+
+  .selected-date-display {
+    align-items: flex-start;
+  }
+
+  .task-cell {
+    max-width: 150px;
+  }
+}

@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react"
-import { Search, MoreVertical, Edit, X, Calendar } from "lucide-react"
+import { Search, MoreVertical, Edit, X, Calendar, Trash2 } from "lucide-react"
 import axios from "axios"
 import "../styles/attendance.css"
 
@@ -10,7 +10,9 @@ const AttendancePage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0])
   const [showTaskModal, setShowTaskModal] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [employeeToEdit, setEmployeeToEdit] = useState(null)
+  const [recordToDelete, setRecordToDelete] = useState(null)
   const [activeDropdown, setActiveDropdown] = useState(null)
   const [taskInput, setTaskInput] = useState("")
   const [error, setError] = useState(null)
@@ -142,6 +144,56 @@ const AttendancePage = () => {
     } catch (error) {
       setError("Failed to update task. Please try again.")
       console.error("Error updating task:", error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleDeleteRecord = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      // Only delete if there's an actual attendance record (not just default)
+      if (recordToDelete.attendanceId) {
+        await axios.delete(`${BASE_API_URL}/attendance/${recordToDelete.attendanceId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        // Update local state - reset to default values
+        setAttendanceData((prevData) =>
+          prevData.map((item) =>
+            item.employee._id === recordToDelete.employee._id
+              ? {
+                  ...item,
+                  attendanceStatus: "Present",
+                  task: "",
+                  attendanceId: null,
+                }
+              : item,
+          ),
+        )
+      } else {
+        // If no actual record exists, just reset to defaults
+        setAttendanceData((prevData) =>
+          prevData.map((item) =>
+            item.employee._id === recordToDelete.employee._id
+              ? {
+                  ...item,
+                  attendanceStatus: "Present",
+                  task: "",
+                  attendanceId: null,
+                }
+              : item,
+          ),
+        )
+      }
+
+      setShowDeleteModal(false)
+      setRecordToDelete(null)
+    } catch (error) {
+      setError("Failed to delete attendance record. Please try again.")
+      console.error("Error deleting attendance record:", error)
     } finally {
       setIsLoading(false)
     }
@@ -295,6 +347,18 @@ const AttendancePage = () => {
                             <Edit size={14} />
                             {item.task ? "Edit Task" : "Add Task"}
                           </button>
+                          <button
+                            onClick={() => {
+                              setRecordToDelete(item)
+                              setShowDeleteModal(true)
+                              setActiveDropdown(null)
+                            }}
+                            className="dropdown-item delete"
+                            disabled={isLoading}
+                          >
+                            <Trash2 size={14} />
+                            Delete Record
+                          </button>
                         </div>
                       )}
                     </div>
@@ -306,6 +370,7 @@ const AttendancePage = () => {
         </table>
       </div>
 
+      {/* Task Modal */}
       {showTaskModal && (
         <div className="modal-overlay" onClick={() => setShowTaskModal(false)}>
           <div className="modal-content task-modal" onClick={(e) => e.stopPropagation()}>
@@ -358,6 +423,49 @@ const AttendancePage = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-content delete-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Delete Attendance Record</h2>
+              <button className="close-btn" onClick={() => setShowDeleteModal(false)} disabled={isLoading}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="delete-content">
+              <p>
+                Are you sure you want to delete the attendance record for{" "}
+                <strong>{recordToDelete?.employee.fullName}</strong>?
+              </p>
+              <p>
+                <strong>Date:</strong> {formatDate(selectedDate)}
+              </p>
+              <p>
+                <strong>Current Status:</strong>{" "}
+                <span style={getStatusColor(recordToDelete?.attendanceStatus)}>{recordToDelete?.attendanceStatus}</span>
+              </p>
+              {recordToDelete?.task && (
+                <p>
+                  <strong>Task:</strong> {recordToDelete.task}
+                </p>
+              )}
+              <p className="warning-text">
+                This will reset the attendance to default values (Present status with no task).
+              </p>
+            </div>
+            <div className="delete-actions">
+              <button className="cancel-btn" onClick={() => setShowDeleteModal(false)} disabled={isLoading}>
+                Cancel
+              </button>
+              <button className="delete-confirm-btn" onClick={handleDeleteRecord} disabled={isLoading}>
+                Delete Record
+              </button>
+            </div>
           </div>
         </div>
       )}

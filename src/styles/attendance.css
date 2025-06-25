@@ -29,11 +29,11 @@
 .date-selector {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background-color: var(--color-input-background);
   border: 1px solid var(--color-input-border);
   border-radius: 9999px;
-  padding: 6px 8px;
+  padding: 6px 12px;
 }
 
 .date-selector .date-input {
@@ -54,7 +54,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 2px;
 }
 
 .date-label {
@@ -135,6 +135,15 @@
   white-space: normal;
   word-wrap: break-word;
   line-height: 1.4;
+}
+
+/* Dropdown menu styling */
+.dropdown-item.delete {
+  color: #dc2626;
+}
+
+.dropdown-item.delete:hover {
+  background-color: #fee2e2;
 }
 
 /* Task Modal Specific Styles */
@@ -235,6 +244,75 @@
   background-color: #3d0066;
 }
 
+/* Delete Modal Specific Styles */
+.delete-modal {
+  max-width: 450px;
+}
+
+.delete-content {
+  padding: 20px;
+  text-align: left;
+}
+
+.delete-content p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: var(--color-dark-text);
+  line-height: 1.5;
+}
+
+.delete-content p:last-of-type {
+  margin-bottom: 0;
+}
+
+.warning-text {
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+  background-color: #fee2e2;
+  padding: 8px 12px;
+  border-radius: var(--border-radius);
+  border-left: 4px solid #dc2626;
+  margin-top: 15px;
+}
+
+.delete-actions {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.delete-actions .cancel-btn,
+.delete-actions .delete-confirm-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.delete-actions .cancel-btn {
+  background-color: #f3f4f6;
+  color: var(--color-dark-text);
+  border: 1px solid var(--color-input-border);
+}
+
+.delete-actions .cancel-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.delete-actions .delete-confirm-btn {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+}
+
+.delete-actions .delete-confirm-btn:hover {
+  background-color: #b91c1c;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .attendance-header {
@@ -254,5 +332,9 @@
 
   .task-cell {
     max-width: 150px;
+  }
+
+  .delete-content {
+    text-align: center;
   }
 }

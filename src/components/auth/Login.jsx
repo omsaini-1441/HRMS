@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import dashboardImage from "../../assets/images/dashboard.png";
 import eyeIcon from "../../assets/images/eye.png";
@@ -17,7 +17,7 @@ function Login() {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate(); // Use useNavigate for routing
+  const navigate = useNavigate();
 
   const handleToggle = () => {
     setIsLogin(!isLogin);
@@ -35,79 +35,57 @@ function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    validateField(name, value);
   };
 
-  const validateField = (name, value) => {
-    const newErrors = { ...errors };
-
-    switch (name) {
-      case "fullName":
-        if (!isLogin && !value.trim()) {
-          newErrors.fullName = "Full name is required";
-        } else {
-          delete newErrors.fullName;
-        }
-        break;
-      case "email":
-        if (!value.trim()) {
-          newErrors.email = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          newErrors.email = "Please enter a valid email address";
-        } else {
-          delete newErrors.email;
-        }
-        break;
-      case "password":
-        if (!value) {
-          newErrors.password = "Password is required";
-        } else if (value.length < 6) {
-          newErrors.password = "Password must be at least 6 characters";
-        } else {
-          delete newErrors.password;
-        }
-        if (!isLogin && formData.confirmPassword) {
-          if (value !== formData.confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match";
-          } else {
-            delete newErrors.confirmPassword;
-          }
-        }
-        break;
-      case "confirmPassword":
-        if (!isLogin) {
-          if (!value) {
-            newErrors.confirmPassword = "Please confirm your password";
-          } else if (value !== formData.password) {
-            newErrors.confirmPassword = "Passwords do not match";
-          } else {
-            delete newErrors.confirmPassword;
-          }
-        }
-        break;
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+      newErrors.email = "Please provide a valid email";
     }
-
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!isLogin) {
+      if (!formData.fullName.trim()) {
+        newErrors.fullName = "Full name is required";
+      }
+      if (!formData.confirmPassword) {
+        newErrors.confirmPassword = "Please confirm your password";
+      } else if (formData.confirmPassword !== formData.password) {
+        newErrors.confirmPassword = "Passwords do not match";
+      }
+    }
     setErrors(newErrors);
-  };
-
-  const isFormValid = () => {
-    const hasRequiredFields = formData.email && formData.password;
-    const hasNoErrors = Object.keys(errors).length === 0;
-    const hasFullNameIfRegister = isLogin || formData.fullName;
-    const hasConfirmPasswordIfRegister = isLogin || formData.confirmPassword;
-    return hasRequiredFields && hasNoErrors && hasFullNameIfRegister && hasConfirmPasswordIfRegister;
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isFormValid()) {
+    if (validateForm()) {
       try {
-        // Mock API call to backend (replace with your actual URL)
+        if (!isLogin) {
+          const registerResponse = await fetch("http://localhost:5000/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+          });
+          const registerData = await registerResponse.json();
+          if (!registerResponse.ok) {
+            setErrors({ general: registerData.message || "Registration failed" });
+            return;
+          }
+          setErrors({ general: "Registration successful. Please log in." }); // Ensure this is set
+          setIsLogin(true);
+          setFormData((prev) => ({ ...prev, password: "", confirmPassword: "" }));
+          return;
+        }
         const response = await fetch("http://localhost:5000/api/auth/login", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             email: formData.email,
             password: formData.password,
@@ -115,9 +93,7 @@ function Login() {
         });
         const data = await response.json();
         if (response.ok) {
-          // Store token (in real app, consider secure storage)
           localStorage.setItem("token", data.token);
-          // Redirect to /dashboard/candidates
           navigate("/dashboard/candidates");
         } else {
           setErrors({ general: data.message || "Login failed" });
@@ -135,6 +111,10 @@ function Login() {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
+
+  useEffect(() => {
+    setErrors({}); // Clear errors when switching modes
+  }, [isLogin]);
 
   return (
     <div className="login-container">
@@ -241,8 +221,8 @@ function Login() {
               )}
               <button
                 type="submit"
-                disabled={!isFormValid()}
-                className={`submit-button ${isFormValid() ? "valid" : "invalid"}`}
+                disabled={!formData.email || !formData.password || Object.keys(errors).length > 0}
+                className={`submit-button ${formData.email && formData.password && Object.keys(errors).length === 0 ? "valid" : "invalid"}`}
               >
                 {isLogin ? "Login" : "Register"}
               </button>
@@ -259,7 +239,11 @@ function Login() {
                 {isLogin ? "Don't have an account? Register" : "Already have an account? Login"}
               </button>
             </div>
-            {errors.general && <span className="error-message general-error">{errors.general}</span>}
+            {errors.general && (
+              <span className={errors.general.includes("successful") ? "success-message" : "error-message"}>
+                {errors.general}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -274,6 +274,14 @@
   margin-top: 0.25rem;
 }
 
+/* Success message styling */
+.success-message {
+  color: #10b981; /* Green color for success */
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  text-align: center;
+}
+
 /* Submit button styling with different states */
 .submit-button {
   width: auto;

@@ -38,7 +38,7 @@ const EmployeesPage = () => {
   const departmentOptions = ["Human Resource", "Developer", "Designer"];
 
   const BASE_API_URL =
-    import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+    import.meta.env.VITE_API_URL ;
   const token = localStorage.getItem("token");
 
   useEffect(() => {

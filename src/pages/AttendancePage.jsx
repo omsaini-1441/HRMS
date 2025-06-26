@@ -20,7 +20,7 @@ const AttendancePage = () => {
 
   const statusOptions = ["Present", "Absent", "Medical Leave", "Work from Home"]
 
-  const BASE_API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:5000/api"
+  const BASE_API_URL = import.meta.env.VITE_API_URL 
   const token = localStorage.getItem("token")
 
   useEffect(() => {

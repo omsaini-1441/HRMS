@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UserPlus, Users, ChartNoAxesColumnIncreasing, Sparkles, LogOut } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logoIcon from '../assets/images/logo.png';
@@ -8,12 +8,19 @@ import '../styles/dashboard.css';
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogout = () => {
-    // Clear the token from localStorage
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleConfirmLogout = () => {
     localStorage.removeItem('token');
-    // Redirect to login page
     navigate('/');
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   return (
@@ -59,13 +66,25 @@ function Sidebar() {
         </div>
         <div className="sidebar-category">Others
           <button
-            onClick={handleLogout}
+            onClick={handleLogoutClick}
             className="sidebar-item"
           >
             <LogOut size={18} /> Logout
           </button>
         </div>
       </nav>
+      {showLogoutModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-header-logout">Log Out</h2>
+            <p>Are you sure you want to log out?</p>
+            <div className="modal-buttons">
+              <button onClick={handleCancelLogout} className="modal-cancel">Cancel</button>
+              <button onClick={handleConfirmLogout} className="modal-logout">Logout</button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

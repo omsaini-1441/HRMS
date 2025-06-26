@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import LoginPage from './components/auth/Login';
-import DashboardPage from './pages/dashboardPage';
+import DashboardPage from './pages/DashboardPage';
 import CandidatePage from './pages/CandidatePage';
 import EmployeePage from './pages/EmployeePage';
 import AttendancePage from './pages/AttendancePage';

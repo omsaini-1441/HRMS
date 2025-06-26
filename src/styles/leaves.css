@@ -623,7 +623,7 @@
 }
 
 /* Modal Styles - Enhanced */
-.leave-container .modal-overlay {
+/* .leave-container .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -635,7 +635,7 @@
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
-}
+} */
 
 .leave-container .modal-content {
   background: var(--color-dashboard-card);
@@ -653,7 +653,7 @@
   align-items: center;
   padding: 20px 24px;
   border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(135deg, var(--color-violet-primary) 0%, #3d0066 100%);
+  background:  var(--color-violet-primary) ;
   color: white;
   border-radius: 12px 12px 0 0;
 }

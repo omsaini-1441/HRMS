@@ -89,7 +89,6 @@ npm run dev
 
 The frontend application will start on `http://localhost:5173`
 
-## 🏃‍♂️ Running Both Applications
 
 ### Option 1: Manual Start (Recommended for Development)
 
